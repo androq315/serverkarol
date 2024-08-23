@@ -1,14 +1,10 @@
 import { Administrador } from "../models/administrador.model.js";
-import UsuarioController from "./usuario.controller.js";
 
-class AdministradorController extends UsuarioController {
-  constructor() {
-    super(); // Llama al constructor de la clase UsuarioController
-  }
+class AdministradorController{
 
   static async getAdministradores(req, res) {
     try {
-      const administradores = await Administrador.getAdministrador();
+      const administradores = await Administrador.getAdministradores();
       res.status(200).json(administradores);
     } catch (error) {
       res.status(500).json({ message: "Error al obtener administrador" + error });
