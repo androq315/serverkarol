@@ -55,6 +55,13 @@ class UsuarioController {
         }
     }
 
+    static async deleteUsuario(req, res){
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
 }
 
 export default UsuarioController;
