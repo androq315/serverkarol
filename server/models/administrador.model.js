@@ -1,11 +1,7 @@
 import { DataTypes, INTEGER, Model } from "sequelize";
 import { sequelize } from "../config/db.js";
-import { Usuario } from "./usuario.model.js";
 
-class Administrador extends Usuario {
-  constructor() {
-    super(); // Llama al constructor de la clase Usuario
-  }
+class Administrador extends Model {
 
   static async createAdministrador(administrador) {
     try {
