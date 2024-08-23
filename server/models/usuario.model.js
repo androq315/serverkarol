@@ -11,6 +11,15 @@ class Usuario extends Model {
     }
   }
 
+  static async deleteUsuario(id) {
+    try {
+      return await this.delete(usuario);
+    } catch (error) {
+      console.error(`error al eliminar usuario: ${error}`);
+      throw error;
+    }
+  }
+
   static async getUsuarios() {
     try {
       return await this.findAll();
