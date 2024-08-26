@@ -11,11 +11,15 @@ class Usuario extends Model {
     }
   }
 
-  static async deleteUsuario(id) {
+  static async alternarEstadoUsuario(id_Usua) {
     try {
-      return await this.delete(usuario);
+      const result = await sequelize.query(
+        'CALL AlternarEstadoUsuario(:id_Usua)',
+        {replacements: { id_Usua }, type: sequelize.QueryTypes.RAW}
+      );
+      return result;
     } catch (error) {
-      console.error(`error al eliminar usuario: ${error}`);
+      console.error(`Error al alternar estado del usuario: ${error}`);
       throw error;
     }
   }
@@ -55,7 +59,7 @@ Usuario.init(
     id_Usua: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     correo_Usua: { type: DataTypes.STRING(35), allowNull: false },
     clave_Usua: { type: DataTypes.STRING(40), allowNull: false },
-    estado_Usua:  { type: DataTypes.BOOLEAN, allowNull: false },
+    estado_Usua:  { type: DataTypes.BOOLEAN, defaultValue: true ,allowNull: false },
     id_Rol1FK: { type: DataTypes.INTEGER, allowNull: false },
   },
   {
