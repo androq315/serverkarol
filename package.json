@@ -13,9 +13,11 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "express-fileupload": "^1.5.1",
     "mysql2": "^3.11.0",
     "sequelize": "^6.37.3",
-    "serverbienestar": "file:"
+    "serverbienestar": "file:",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "dotenv": "^16.4.5",

@@ -7,7 +7,7 @@ class AdministradorController{
       const administradores = await Administrador.getAdministradores();
       res.status(200).json(administradores);
     } catch (error) {
-      res.status(500).json({ message: "Error al obtener administrador" + error });
+      res.status(500).json({ message: "Error al obtener los administradores" + error });
     }
   }
 

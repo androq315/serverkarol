@@ -1,67 +1,57 @@
 import { DataTypes, INTEGER, Model } from "sequelize";
 import { sequelize } from "../config/db.js";
 
-class Ficha extends Model {
-  static async createFicha(ficha) {
+class Rol extends Model {
+  static async createRol(Rol) {
     try {
-      return await this.create(ficha);
+      return await this.create(Rol);
     } catch (error) {
-      console.error(`error al crear ficha: ${error}`);
+      console.error(`error al crear rol: ${error}`);
       throw error;
     }
   }
 
-  static async getFichas() {
+  static async getRoles() {
     try {
       return await this.findAll();
     } catch (error) {
-      console.error(`error al encontrar las fichas: ${error}`);
+      console.error(`error al encontrar los roles: ${error}`);
       throw error;
     }
   }
 
-  static async getFicha(id) {
+  static async getRol(id) {
     try {
       return await this.findByPk(id);
     } catch (error) {
-      console.error(`error al encontrar la ficha: ${error}`);
+      console.error(`error al encontrar el rol: ${error}`);
       throw error;
     }
   }
 
-  static async updateFicha(id, update_ficha) {
+  static async updateRol(id, update_rol) {
     try {
-      const ficha = await this.findByPk(id);
-      return ficha.update( update_ficha )
+      const rol = await this.findByPk(id);
+      return rol.update( update_rol )
     } catch (error) {
-      console.error(`error no se actualizó la ficha: ${error}`);
-      throw error;
-    }
-  }
-
-  static async deleteFicha(id) {
-    try {
-      return await this.findByPk(id);
-    } catch (error) {
-      console.error(`error al eliminar la ficha: ${error}`);
+      console.error(`error no se actualizó el rol: ${error}`);
       throw error;
     }
   }
 
 }
 
-Ficha.init(
+Rol.init(
   {
-    id_Ficha: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    cordinacion_Ficha: { type: DataTypes.STRING(40), allowNull: false },
-    numero_Ficha: { type: DataTypes.INTEGER, allowNull: false },
+    id_Rol: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    nombre_Rol: { type: DataTypes.STRING(30), allowNull: false },
   },
   {
     sequelize, 
-    tableName: "Ficha",
+    tableName: "Rol",
     timestamps: false,
     underscored: false
   }
 );
 
-export {Ficha};
+export {Rol};

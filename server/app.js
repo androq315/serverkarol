@@ -6,6 +6,7 @@ import InstructorRoutes from './routes/instructor.routes.js';
 import CapacitadorRoutes  from './routes/capacitador.routes.js';
 import HorarioRoutes  from './routes/horario.routes.js';
 import FichaRouter  from './routes/ficha.routes.js';
+import RolRouter  from './routes/rol.routes.js';
 
 
 
@@ -21,5 +22,6 @@ app.use(InstructorRoutes);
 app.use(CapacitadorRoutes);
 app.use(HorarioRoutes);
 app.use(FichaRouter);
+app.use(RolRouter);
 
 export default app;

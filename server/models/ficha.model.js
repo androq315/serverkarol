@@ -39,14 +39,15 @@ class Ficha extends Model {
     }
   }
 
-  static async deleteFicha(id) {
+  static async eliminarFicha(id_Ficha){
     try {
-      return await this.findByPk(id);
+        const ficha = await Ficha.destroy({where:{id_Ficha}});
+        return ficha; 
     } catch (error) {
-      console.error(`error al eliminar la ficha: ${error}`);
-      throw error;
+        console.error(`error al eliminar la ficha: ${error}` );
+        throw error;
     }
-  }
+}
 
 }
 

@@ -51,20 +51,21 @@ class FichaController {
         }
     }
 
-    static async deleteFicha(req, res){
+    static async deleteFicha(req, res) {
         try {
-            const id = req.params.id;
-            const  ficha = await Ficha.deleteFicha(id);
-            if  ( Ficha ) {
-                res.status( 200  ).json( ficha );
+            const { id_Ficha } = req.params;
+            console.log('id_Ficha:', id_Ficha);
+            const result = await Ficha.eliminarFicha(id_Ficha);
+            if (result) {
+                res.status(200).json({ message: 'Ficha eliminada exitosamente' });
             } else {
-                res.status( 404  ).json( { message: "Ficha no encontrada" } );
+                res.status(404).json({ message: 'Ficha no encontrada' });
             }
         } catch (error) {
-            res.status( 500  ).json( { message: "Error al eliminar la ficha" +  error } );
+            console.error(`Error al eliminar la ficha: ${error.message}`);
+            res.status(500).json({ message: 'Error al eliminar la ficha' });
         }
     }
-
 }
 
 export default FichaController;

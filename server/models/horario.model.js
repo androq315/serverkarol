@@ -40,6 +40,16 @@ class Horario extends Model {
     }
   }
 
+  static async deleteHorario(id) {
+    try {
+      return await this.findByPk(id);
+    } catch (error) {
+      console.error(`error al eliminar la ficha: ${error}`);
+      throw error;
+    }
+  }
+
+
 }
 
 Horario.init(
