@@ -29,7 +29,9 @@ class CapacitadorController {
             const update_capacitador = {
                 nombre_Capac: req.body.nombre_Capac,
                 apellidos_Capac:  req.body.apellidos_Capac,
-                correo_Capac:  req.body.correo_Capac,
+                tipodoc_Capac:  req.body.tipodoc_Capac,
+                documento_Capac:  req.body.documento_Capac,
+                genero_Capac:  req.body.genero_Capac,
                 id_Usua1FK:  req.body.id_Usua1FK
             }
             const id = req.params.id;
@@ -45,7 +47,9 @@ class CapacitadorController {
             const cap = {
                 nombre_Capac: req.body.nombre_Capac,
                 apellidos_Capac:  req.body.apellidos_Capac,
-                correo_Capac:  req.body.correo_Capac,
+                tipodoc_Capac:  req.body.tipodoc_Capac,
+                documento_Capac:  req.body.documento_Capac,
+                genero_Capac:  req.body.genero_Capac,
                 id_Usua1FK:  req.body.id_Usua1FK
              }
             await  Capacitador.createCapacitador(cap);

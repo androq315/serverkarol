@@ -64,7 +64,7 @@ Horario.init(
     bloque_horaclase_Horari:  { type: DataTypes.STRING(25), allowNull: false },
     fechaDia_Horari: { type: DataTypes.STRING(30), allowNull: false },
     id_InstrucFK: { type: DataTypes.INTEGER, allowNull: false },
-    id_FichaFK: { type: DataTypes.INTEGER, allowNull: false },
+    numero_FichaFK: { type: DataTypes.INTEGER, allowNull: false },
   },
   {
     sequelize, 

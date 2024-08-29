@@ -12,8 +12,8 @@ class FichaController {
 
     static async getFicha(req, res){
         try {
-            const id = req.params.id;
-            const  ficha = await Ficha.getFicha(id);
+            const numero_Ficha = req.params.id;
+            const  ficha = await Ficha.getFicha(numero_Ficha);
             if  ( Ficha ) {
                 res.status( 200  ).json( ficha );
             } else {
@@ -27,11 +27,11 @@ class FichaController {
     static async putFicha(req, res){
         try {
             const update_ficha = {
+                numero_Ficha:  req.body.numero_Ficha,
                 cordinacion_Ficha: req.body.cordinacion_Ficha,
-                numero_Ficha:  req.body.numero_Ficha
             }
-            const id = req.params.id;
-            await Ficha.updateFicha(id, update_ficha);
+            const numero_Ficha = req.params.id;
+            await Ficha.updateFicha(numero_Ficha, update_ficha);
             res.status( 200  ).json( { message: "Ficha actualizada con éxito"} );
         } catch (error) {
             res.status( 500  ).json( { message: "Error al actualizar la ficha" +  error } );
@@ -41,8 +41,8 @@ class FichaController {
     static  async postFicha(req, res){
         try {
             const fi = {
+                numero_Ficha:  req.body.numero_Ficha,
                 cordinacion_Ficha: req.body.cordinacion_Ficha,
-                numero_Ficha:  req.body.numero_Ficha
             }
             await  Ficha.createFicha(fi);
             res.status( 201 ).json( { message: "Ficha creada con exito" } );
@@ -53,9 +53,9 @@ class FichaController {
 
     static async deleteFicha(req, res) {
         try {
-            const { id_Ficha } = req.params;
-            console.log('id_Ficha:', id_Ficha);
-            const result = await Ficha.eliminarFicha(id_Ficha);
+            const { numero_Ficha } = req.params;
+            console.log('numero_Ficha:', numero_Ficha);
+            const result = await Ficha.eliminarFicha(numero_Ficha);
             if (result) {
                 res.status(200).json({ message: 'Ficha eliminada exitosamente' });
             } else {

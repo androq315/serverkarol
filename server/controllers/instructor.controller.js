@@ -29,7 +29,9 @@ class InstructorController {
             const update_instructor = {
                 nombre_Instruc: req.body.nombre_Instruc,
                 apellido_Instruc:  req.body.apellido_Instruc,
-                correo_Instruc:  req.body.correo_Instruc,
+                tipodoc_Instruc: req.body.nombre_Instruc,
+                documento_Instruc:  req.body.apellido_Instruc,
+                genero_Instruc:  req.body.correo_Instruc,
                 id_Usua3FK:  req.body.id_Usua3FK
             }
             const id = req.params.id;
@@ -45,7 +47,9 @@ class InstructorController {
             const ins = {
                 nombre_Instruc: req.body.nombre_Instruc,
                 apellido_Instruc:  req.body.apellido_Instruc,
-                correo_Instruc:  req.body.correo_Instruc,
+                tipodoc_Instruc: req.body.nombre_Instruc,
+                documento_Instruc:  req.body.apellido_Instruc,
+                genero_Instruc:  req.body.correo_Instruc,
                 id_Usua3FK:  req.body.id_Usua3FK
              }
             await  Instructor.createInstructor(ins);

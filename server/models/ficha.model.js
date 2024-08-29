@@ -20,9 +20,9 @@ class Ficha extends Model {
     }
   }
 
-  static async getFicha(id) {
+  static async getFicha(numero_Ficha) {
     try {
-      return await this.findByPk(id);
+      return await this.findByPk(numero_Ficha);
     } catch (error) {
       console.error(`error al encontrar la ficha: ${error}`);
       throw error;
@@ -31,38 +31,37 @@ class Ficha extends Model {
 
   static async updateFicha(id, update_ficha) {
     try {
-      const ficha = await this.findByPk(id);
-      return ficha.update( update_ficha )
+      const ficha = await this.findByPk(numero_Ficha);
+      return ficha.update(update_ficha);
     } catch (error) {
       console.error(`error no se actualizó la ficha: ${error}`);
       throw error;
     }
   }
 
-  static async eliminarFicha(id_Ficha){
+  static async eliminarFicha(numero_Ficha) {
     try {
-        const ficha = await Ficha.destroy({where:{id_Ficha}});
-        return ficha; 
+      const ficha = await Ficha.destroy({ where: { numero_Ficha } });
+      return ficha;
     } catch (error) {
-        console.error(`error al eliminar la ficha: ${error}` );
-        throw error;
+      console.error(`error al eliminar la ficha: ${error}`);
+      throw error;
     }
-}
+  }
 
 }
 
 Ficha.init(
   {
-    id_Ficha: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    numero_Ficha: { type: DataTypes.INTEGER, primaryKey: true },
     cordinacion_Ficha: { type: DataTypes.STRING(40), allowNull: false },
-    numero_Ficha: { type: DataTypes.INTEGER, allowNull: false },
   },
   {
-    sequelize, 
+    sequelize,
     tableName: "Ficha",
     timestamps: false,
-    underscored: false
+    underscored: false,
   }
 );
 
-export {Ficha};
+export { Ficha };

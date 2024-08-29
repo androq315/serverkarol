@@ -30,7 +30,10 @@ class AdministradorController{
       const update_administrador = {
         nombre_Admin: req.body.nombre_Admin,
         apellido_Admin: req.body.apellido_Admin,
-        estado_Usua: req.body.estado_Usua,
+        tipodoc_Admin: req.body.tipodoc_Admin,
+        documento_Admin: req.body.documento_Admin,
+        documento_Admin: req.body.documento_Admin,
+        genero_Admin: req.body.genero_Admin,
         id_Usua2FK: req.body.id_Usua2FK,
       };
       const id = req.params.id;
@@ -48,6 +51,10 @@ class AdministradorController{
       const ad = {
         nombre_Admin: req.body.nombre_Admin,
         apellido_Admin: req.body.apellido_Admin,
+        tipodoc_Admin: req.body.tipodoc_Admin,
+        documento_Admin: req.body.documento_Admin,
+        documento_Admin: req.body.documento_Admin,
+        genero_Admin: req.body.genero_Admin,
         id_Usua2FK: req.body.id_Usua2FK,
       };
       await Administrador.createAdministrador(ad);
