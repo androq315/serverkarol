@@ -56,7 +56,6 @@ Taller.init(
     id_Taller: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     nombre_Taller: { type: DataTypes.STRING(40), allowNull: false },
     tipo_Taller: { type: DataTypes.STRING(55), allowNull: false },
-    id_dispoB1FK: { type: DataTypes.INTEGER, allowNull: false },
   },
   {
     sequelize, 

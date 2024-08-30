@@ -11,6 +11,7 @@ import TallerRoutes   from './routes/taller.routes.js';
 import DisponibilidadBienestarRoutes  from './routes/disponibilidad_bienestar.routes.js';
 import ProgramacionCapaTallerRoutes from './routes/programacion_capa_taller.routes.js';
 import ExcelRoutes from './routes/excel.routes.js';
+import AutenticacionRoutes from './routes/autenticacion.routes.js';
 
 const app = express();
 
@@ -29,5 +30,6 @@ app.use(TallerRoutes);
 app.use(DisponibilidadBienestarRoutes);
 app.use(ProgramacionCapaTallerRoutes);
 app.use(ExcelRoutes);
+app.use(AutenticacionRoutes);
 
 export default app;

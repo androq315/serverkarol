@@ -1,9 +1,12 @@
 import { DataTypes, INTEGER, Model } from "sequelize";
 import { sequelize } from "../config/db.js";
+import bcrypt from 'bcrypt'
 
 class Usuario extends Model {
   static async createUsuario(usuario) {
     try {
+      const hashedPass = await bcrypt.hash(usuario.clave_Usua, 2);
+      usuario.clave_Usua = hashedPass;
       return await this.create(usuario);
     } catch (error) {
       console.error(`error al crear usuaurio: ${error}`);
@@ -50,6 +53,11 @@ class Usuario extends Model {
       console.error(`error no se actualizó el usuario: ${error}`);
       throw error;
     }
+  }
+
+  async comparar_clave(clave){
+    console.log("Comparando", clave, "con", this.clave_Usua); // Log para verificar lo que se está comparando
+    return await bcrypt.compare(clave, this.clave_Usua)
   }
 
 }

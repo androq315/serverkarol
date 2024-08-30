@@ -29,7 +29,6 @@ class TallerController {
             const update_taller = {
                 nombre_Taller: req.body.nombre_Taller,
                 tipo_Taller:  req.body.tipo_Taller,
-                id_dispoB1FK: req.body.id_dispoB1FK,
             }
             const id = req.params.id;
             await Taller.updateTaller(id, update_taller);
@@ -44,7 +43,6 @@ class TallerController {
             const tll = {
                 nombre_Taller: req.body.nombre_Taller,
                 tipo_Taller:  req.body.tipo_Taller,
-                id_dispoB1FK: req.body.id_dispoB1FK,
              }
             await  Taller.createTaller(tll);
             res.status( 201 ).json( { message: "Taller creado con exito" } );
