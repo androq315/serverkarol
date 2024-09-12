@@ -32,7 +32,6 @@ class AdministradorController{
         apellido_Admin: req.body.apellido_Admin,
         tipodoc_Admin: req.body.tipodoc_Admin,
         documento_Admin: req.body.documento_Admin,
-        documento_Admin: req.body.documento_Admin,
         genero_Admin: req.body.genero_Admin,
         id_Usua2FK: req.body.id_Usua2FK,
       };
@@ -52,7 +51,6 @@ class AdministradorController{
         nombre_Admin: req.body.nombre_Admin,
         apellido_Admin: req.body.apellido_Admin,
         tipodoc_Admin: req.body.tipodoc_Admin,
-        documento_Admin: req.body.documento_Admin,
         documento_Admin: req.body.documento_Admin,
         genero_Admin: req.body.genero_Admin,
         id_Usua2FK: req.body.id_Usua2FK,
