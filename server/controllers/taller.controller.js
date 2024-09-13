@@ -14,7 +14,7 @@ class TallerController {
         try {
             const id = req.params.id;
             const  taller = await Taller.getTaller(id);
-            if  ( Taller ) {
+            if  ( taller ) {
                 res.status( 200  ).json( taller );
             } else {
                 res.status( 404  ).json( { message: "Taller no encontrado" } );

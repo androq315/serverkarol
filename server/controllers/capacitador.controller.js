@@ -14,7 +14,7 @@ class CapacitadorController {
         try {
             const id = req.params.id;
             const  capacitador = await Capacitador.getCapacitador(id);
-            if  ( Capacitador ) {
+            if  ( capacitador ) {
                 res.status( 200  ).json( capacitador );
             } else {
                 res.status( 404  ).json( { message: "Capacitador no encontrado" } );

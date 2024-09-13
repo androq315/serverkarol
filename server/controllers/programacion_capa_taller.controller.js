@@ -51,7 +51,7 @@ class ProgramacionCapaTallerController {
       const programacionCT = await ProgramacionCapaTaller.getProgramacionCT(
         id_procaptall
       );
-      if (ProgramacionCapaTaller) {
+      if (programacionCT) {
         res.status(200).json(programacionCT);
       } else {
         res.status(404).json({ message: "Programacion no encontrada" });

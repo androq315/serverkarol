@@ -62,7 +62,7 @@ class ProgramacionCapaTaller extends Model {
     }
   }
 
-  static async updateProgramacionCT(id, update_programacionCT) {
+  static async updateProgramacionCT(id_procaptall, update_programacionCT) {
     try {
       const programacionCT = await this.findByPk(id_procaptall);
       return programacionCT.update(update_programacionCT);

@@ -63,7 +63,7 @@ class Usuario extends Model {
           ...(tipodoc_Instruc && { tipodoc_Instruc }),
           ...(documento_Instruc && { documento_Instruc }),
         };
-  
+
         return perfilFiltrado;
       }
   
