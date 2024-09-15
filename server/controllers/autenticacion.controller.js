@@ -24,7 +24,13 @@ class AutenticacionController {
             token,
             user: {
               id: usuario.id_Usua,
-              correo: usuario.correo_Usua
+              correo: usuario.correo_Usua,
+              rol: usuario.id_Rol1FK,
+              nombre: usuario.nombre_Usua,
+              apellido: usuario.apellido_Usua,
+              genero: usuario.genero_Usua,
+              tipoDocumento: usuario.tipoDoc_Usua,
+              documento: usuario.doc_Usua
             },
           });
         } else {

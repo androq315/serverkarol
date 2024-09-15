@@ -61,7 +61,6 @@ static async getPerfil(req, res) {
         .json({ message: "Error al actualizar el usuario" + error });
     }
   }
-
   static async postUsuario(req, res) {
     const {
       correo_Usua,
@@ -74,7 +73,8 @@ static async getPerfil(req, res) {
       tipo_documento,
       documento,
       ...restoDatos
-    } = req.body;
+    
+} = req.body;
 
     // Validar campos obligatorios comunes
     if (!correo_Usua || !clave_Usua || !id_Rol1FK) {
