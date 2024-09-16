@@ -31,19 +31,30 @@ static async getPerfil(req, res) {
   }
 
   static async getUsuario(req, res) {
+    const { tipoDoc, documento, nombre } = req.params;
+  
     try {
-      const id = req.params.id;
-      const usuario = await Usuario.getUsuario(id);
-      if (usuario) {
-        res.status(200).json(usuario);
+      if (tipoDoc && documento) {
+        // Enviar 'null' o ignorar el nombre si no se incluye
+        const usuario = await Usuario.getbuscarUsuario(tipoDoc, documento, nombre || null);
+  
+        console.log('Usuario encontrado:', usuario);
+  
+        if (usuario && Object.keys(usuario).length > 0) {
+          return res.status(200).json(usuario);
+        } else {
+          return res.status(404).json({ message: 'No se encontró el usuario' });
+        }
       } else {
-        res.status(404).json({ message: "Usuario no encontrado" });
+        return res.status(400).json({ message: 'Faltan parámetros requeridos' });
       }
     } catch (error) {
-      res.status(500).json({ message: "Error al obtener el usuario" + error });
+      return res.status(500).json({ message: 'Error al obtener el usuario', error });
     }
   }
-
+  
+  
+  
   static async putUsuario(req, res) {
     try {
       const update_usuario = {

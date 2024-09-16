@@ -97,14 +97,24 @@ class Usuario extends Model {
     }
   }
 
-  static async getUsuario(id) {
-    try {
-      return await this.findByPk(id);
-    } catch (error) {
-      console.error(`error al encontrar el usuario: ${error}`);
-      throw error;
-    }
+// UsuarioModel.js
+
+static async getbuscarUsuario(tipoDoc, documento, nombre) {
+  try {
+    const [result] = await sequelize.query(`CALL ObtenerUsuario(:tipoDoc, :documento, :nombre)`, {
+      replacements: { 
+        tipoDoc, 
+        documento, 
+        nombre: nombre !== '' ? nombre : null  // Si nombre es un string vacío, lo cambiamos a null
+      },
+      type: sequelize.QueryTypes.SELECT
+    });
+    return result;
+  } catch (error) {
+    console.error(`Error al buscar usuario: ${error}`);
+    throw error;
   }
+}
 
   static async updateUsuario(id, update_usuario) {
     try {
