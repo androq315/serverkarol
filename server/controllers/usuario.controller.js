@@ -30,28 +30,36 @@ static async getPerfil(req, res) {
     }
   }
 
-  static async getUsuario(req, res) {
-    const { tipoDoc, documento, nombre } = req.params;
-  
-    try {
-      if (tipoDoc && documento) {
-        // Enviar 'null' o ignorar el nombre si no se incluye
-        const usuario = await Usuario.getbuscarUsuario(tipoDoc, documento, nombre || null);
-  
-        console.log('Usuario encontrado:', usuario);
-  
-        if (usuario && Object.keys(usuario).length > 0) {
-          return res.status(200).json(usuario);
-        } else {
-          return res.status(404).json({ message: 'No se encontró el usuario' });
-        }
+
+
+static async getUsuario(req, res) {
+  const { tipoDoc, documento, nombre } = req.params;
+
+  try {
+    if (tipoDoc && documento) {
+      // Ejecuta el procedimiento almacenado y captura el resultado completo
+      const results = await Usuario.getbuscarUsuario(tipoDoc, documento, nombre || null);
+
+      // Extrae solo el primer bloque de datos que contiene la información del usuario
+      const usuario = Array.isArray(results) && results.length > 0 ? results[0] : null;
+
+      console.log('Usuario encontrado:', usuario);
+
+      if (usuario) {
+        return res.status(200).json(usuario);
       } else {
-        return res.status(400).json({ message: 'Faltan parámetros requeridos' });
+        return res.status(404).json({ message: 'No se encontró el usuario' });
       }
-    } catch (error) {
-      return res.status(500).json({ message: 'Error al obtener el usuario', error });
+    } else {
+      return res.status(400).json({ message: 'Faltan parámetros requeridos' });
     }
+  } catch (error) {
+    console.error('Error al obtener el usuario:', error);
+    return res.status(500).json({ message: 'Error al obtener el usuario', error });
   }
+}
+
+  
   
   
   

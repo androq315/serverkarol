@@ -101,20 +101,23 @@ class Usuario extends Model {
 
 static async getbuscarUsuario(tipoDoc, documento, nombre) {
   try {
-    const [result] = await sequelize.query(`CALL ObtenerUsuario(:tipoDoc, :documento, :nombre)`, {
+    const result = await sequelize.query(`CALL ObtenerUsuario(:tipoDoc, :documento, :nombre)`, {
       replacements: { 
         tipoDoc, 
         documento, 
-        nombre: nombre !== '' ? nombre : null  // Si nombre es un string vacío, lo cambiamos a null
+        nombre: nombre !== '' ? nombre : null
       },
       type: sequelize.QueryTypes.SELECT
     });
+
+    console.log('Resultado del procedimiento almacenado:', result);
     return result;
   } catch (error) {
     console.error(`Error al buscar usuario: ${error}`);
     throw error;
   }
 }
+
 
   static async updateUsuario(id, update_usuario) {
     try {
