@@ -119,15 +119,42 @@ static async getbuscarUsuario(tipoDoc, documento, nombre) {
 }
 
 
-  static async updateUsuario(id, update_usuario) {
-    try {
-      const usuario = await this.findByPk(id);
-      return usuario.update( update_usuario )
-    } catch (error) {
-      console.error(`error no se actualizó el usuario: ${error}`);
-      throw error;
+
+static async updateUsuario(id_Usuario, update_usuario) {
+  const saltRounds = 10; // Definir el número de rondas de sal
+  const { nombre, apellido, correo_Usua, clave_Usua, genero, id_Rol1FK, estado } = update_usuario;
+
+  try {
+    // Si se proporciona una nueva clave, encríptala
+    let hashedClave = null;
+    if (clave_Usua) {
+      hashedClave = await bcrypt.hash(clave_Usua, saltRounds);
     }
+
+    // Ejecutar el procedimiento almacenado
+    await sequelize.query(
+      `CALL actualizarUsuario(:p_id_Usua, :p_nombre, :p_apellido, :p_correo, :p_clave, :p_estado, :p_genero, :p_id_Rol)`,
+      {
+        replacements: {
+          p_id_Usua: id_Usuario,
+          p_nombre: nombre,
+          p_apellido: apellido,
+          p_correo: correo_Usua,
+          p_clave: hashedClave || null, // Utiliza la clave encriptada o null si no se proporciona
+          p_estado: estado, // Asegúrate de pasar el estado
+          p_genero: genero,
+          p_id_Rol: id_Rol1FK
+        }
+      }
+    );
+
+    return { message: "Usuario actualizado con éxito" };
+  } catch (error) {
+    console.error(`Error al actualizar el usuario con el procedimiento almacenado: ${error.message}`);
+    throw error;
   }
+}
+
 
   async comparar_clave(clave){
     console.log("Comparando", clave, "con", this.clave_Usua); // Log para verificar lo que se está comparando

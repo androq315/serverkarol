@@ -63,23 +63,38 @@ static async getUsuario(req, res) {
   
   
   
-  static async putUsuario(req, res) {
-    try {
-      const update_usuario = {
-        correo_Usua: req.body.correo_Usua,
-        clave_Usua: req.body.clave_Usua,
-        estado_Usua: req.body.estado_Usua,
-        id_Rol1FK: req.body.id_Rol1FK,
-      };
-      const id = req.params.id;
-      await Usuario.updateUsuario(id, update_usuario);
-      res.status(200).json({ message: "Usuario actualizado con éxito" });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Error al actualizar el usuario" + error });
+static async putUsuario(req, res) {
+  try {
+    const { nombre, apellido, correo_Usua, clave_Usua, genero, id_Rol1FK, estado } = req.body;
+    const id_Usuario = req.params.id_Usuario;
+
+    // Validar que todos los parámetros necesarios estén presentes
+    if (!nombre || !apellido || !correo_Usua || !genero || !id_Rol1FK || estado === undefined) {
+      return res.status(400).json({ message: "Faltan parámetros necesarios." });
     }
+
+    // Crear el objeto de usuario a actualizar
+    const update_usuario = {
+      nombre,
+      apellido,
+      correo_Usua,
+      clave_Usua, // La clave será encriptada en el modelo si se proporciona
+      genero,
+      id_Rol1FK,
+      estado // Incluir el estado en la actualización
+    };
+
+    // Llamar al método del modelo que invoca el procedimiento almacenado
+    await Usuario.updateUsuario(id_Usuario, update_usuario);
+
+    res.status(200).json({ message: "Usuario actualizado con éxito" });
+  } catch (error) {
+    console.error(`Error al actualizar el usuario: ${error.message}`);
+    res.status(500).json({ message: `Error al actualizar el usuario: ${error.message}` });
   }
+}
+
+
   static async postUsuario(req, res) {
     const {
       correo_Usua,
