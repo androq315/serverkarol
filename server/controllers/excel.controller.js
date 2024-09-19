@@ -80,78 +80,93 @@ class ExcelController {
       const workbook = XLSX.readFile(filePath);
       const sheetName = workbook.SheetNames[0];
       const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-
+  
+      const transaction = await Usuario.sequelize.transaction();
+  
       for (const row of sheetData) {
         const correo = row.correo || row.Email;
         const clave = row.clave || row.Password;
-        const rol = row.rol || row.Rol;
+        const rol = parseInt(row.rol || row.Rol, 10);
         const nombre = row.nombre || row.Nombre;
         const apellido = row.apellido || row.Apellido;
         const tipoDocumento = row["tipo documento"] || row["Tipo Documento"];
         const documento = row.documento || row.Documento;
         const genero = row.genero || row.Género || "No especificado"; // Asignar un valor predeterminado
-
-        // Buscar o crear el rol
-        const [rolRecord] = await Rol.findOrCreate({
-          where: {
-            [Op.or]: [{ nombre_Rol: rol }, { id_Rol: rol }],
-          },
-          defaults: { nombre_Rol: rol },
-        });
-
-        // Crear el usuario
-        const usuario = await Usuario.create({
+  
+        // Validar campos obligatorios comunes
+        if (!correo || !clave || !rol) {
+          throw new Error('Correo, clave y rol son requeridos.');
+        }
+  
+        const rolesValidos = [1, 2, 3]; // Define los roles válidos según tu lógica
+        if (!rolesValidos.includes(rol)) {
+          throw new Error('Rol de usuario no reconocido.');
+        }
+  
+        // Hash de la clave
+        const hashedPass = await bcrypt.hash(clave, 10);
+  
+        // Crear usuario base
+        const nuevoUsuario = await Usuario.create({
           correo_Usua: correo,
-          clave_Usua: clave,
-          id_Rol1FK: rolRecord.id_Rol,
-        });
-
-        // Insertar en la tabla correspondiente basado en el rol
-        if (
-          rol.toLowerCase() === "capacitador" ||
-          rolRecord.id_Rol === "id_capacitador"
-        ) {
-          await Capacitador.create({
-            nombre_Capac: nombre,
-            apellidos_Capac: apellido,
-            tipodoc_Capac: tipoDocumento,
-            documento_Capac: documento,
-            genero_Capac: genero, // Aquí se maneja el valor del género
-            id_Usua1FK: usuario.id_Usua,
-          });
-        } else if (
-          rol.toLowerCase() === "administrador" ||
-          rolRecord.id_Rol === "id_administrador"
-        ) {
+          clave_Usua: hashedPass,
+          id_Rol1FK: rol
+        }, { transaction });
+  
+        // Crear datos específicos según el rol
+        if (rol === 1) { // Administrador
+          if (!nombre || !apellido || !tipoDocumento || !documento) {
+            throw new Error('Faltan datos para crear un Administrador');
+          }
           await Administrador.create({
             nombre_Admin: nombre,
             apellido_Admin: apellido,
-            tipodoc_Admin: tipoDocumento,
+            tipoDocumento_Admin: tipoDocumento,
             documento_Admin: documento,
             genero_Admin: genero,
-            id_Usua2FK: usuario.id_Usua,
-          });
-        } else if (
-          rol.toLowerCase() === "instructor" ||
-          rolRecord.id_Rol === "id_instructor"
-        ) {
+            id_Usuario1FK: nuevoUsuario.id_Usuario
+          }, { transaction });
+  
+        } else if (rol === 2) { // Instructor
+          if (!nombre || !apellido || !tipoDocumento || !documento) {
+            throw new Error('Faltan datos para crear un Instructor');
+          }
           await Instructor.create({
-            nombre_Instruc: nombre,
-            apellido_Instruc: apellido,
-            tipodoc_Instruc: tipoDocumento,
-            documento_Instruc: documento,
-            genero_Instruc: genero,
-            id_Usua3FK: usuario.id_Usua,
-          });
+            nombre_Inst: nombre,
+            apellido_Inst: apellido,
+            tipoDocumento_Inst: tipoDocumento,
+            documento_Inst: documento,
+            genero_Inst: genero,
+            id_Usuario1FK: nuevoUsuario.id_Usuario
+          }, { transaction });
+  
+        } else if (rol === 3) { // Capacitador
+          if (!nombre || !apellido || !tipoDocumento || !documento) {
+            throw new Error('Faltan datos para crear un Capacitador');
+          }
+          await Capacitador.create({
+            nombre_Cap: nombre,
+            apellido_Cap: apellido,
+            tipoDocumento_Cap: tipoDocumento,
+            documento_Cap: documento,
+            genero_Cap: genero,
+            id_Usuario1FK: nuevoUsuario.id_Usuario
+          }, { transaction });
         }
       }
-
+  
+      // Confirmar transacción
+      await transaction.commit();
       res.status(201).json({ message: "Usuarios cargados con éxito" });
+  
     } catch (error) {
+      // Revertir transacción en caso de error
+      if (transaction) await transaction.rollback();
       console.error("Error al cargar los usuarios:", error);
-      res.status(500).json({ message: "Error al cargar los usuarios" });
+      res.status(500).json({ message: "Error al cargar los usuarios: " + error.message });
     }
   }
+  
   static async cargarHorarios(req, res) {
     try {
       const filePath = req.file.path;

@@ -13,6 +13,7 @@ class Usuario extends Model {
       throw error;
     }
   }
+  
 
   static async obtenerPerfilUsuario(id_Usua) {
     try {

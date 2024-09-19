@@ -95,95 +95,98 @@ static async putUsuario(req, res) {
 }
 
 
-  static async postUsuario(req, res) {
-    const {
-      correo_Usua,
-      clave_Usua,
-      estado_Usua,
-      id_Rol1FK,
-      nombre_Usua,
-      apellido_Usua,
-      genero_Usua,
-      tipo_documento,
-      documento,
-      ...restoDatos
-    
-} = req.body;
+static async postUsuario(req, res) {
+  const {
+    correo,
+    clave,
+    rol,
+    nombre,
+    apellido,
+    genero,
+    tipoDocumento,
+    documento,
+    ...restoDatos
+  } = req.body;
 
-    // Validar campos obligatorios comunes
-    if (!correo_Usua || !clave_Usua || !id_Rol1FK) {
-      return res.status(400).json({ message: 'Correo, clave y rol son requeridos.' });
-    }
+  // Validar campos obligatorios comunes
+  if (!correo || !clave || !rol) {
+    return res.status(400).json({ message: 'Correo, clave y rol son requeridos.' });
+  }
 
-    // Iniciar una transacción
-    const transaction = await Usuario.sequelize.transaction();
+  console.log("Rol recibido:", rol);  // Log para verificar el rol
 
-    try {
-      // Crear usuario base
-      const hashedPass = await bcrypt.hash(clave_Usua, 10); // Hash de la clave
-      const nuevoUsuario = await Usuario.create({
-        correo_Usua,
-        clave_Usua: hashedPass,
-        estado_Usua,
-        id_Rol1FK
-      }, { transaction });
+  const rolesValidos = [1, 2, 3]; // Define los roles válidos según la base de datos
+  if (!rolesValidos.includes(parseInt(rol, 10))) {
+    return res.status(400).json({ message: 'Rol de usuario no reconocido.' });
+  }
 
-      // Crear datos específicos de cada tipo de usuario
-      if (id_Rol1FK === 1) { // Administrador
-        if (!nombre_Usua || !apellido_Usua || !tipo_documento || !documento) {
-          throw new Error('Nombre, apellido, tipo de documento y documento son requeridos para Administrador.');
-        }
-        await Administrador.create({
-          nombre_Admin: nombre_Usua,
-          apellido_Admin: apellido_Usua,
-          tipodoc_Admin: tipo_documento,
-          documento_Admin: documento,
-          genero_Admin: genero_Usua, // Asegúrate de incluir esto
-          id_Usua2FK: nuevoUsuario.id_Usua,
-          ...restoDatos
-        }, { transaction });
-      } else if (id_Rol1FK === 2) { // Instructor
-        if (!nombre_Usua || !apellido_Usua || !tipo_documento || !documento) {
-          throw new Error('Nombre, apellido, tipo de documento y documento son requeridos para Instructor.');
-        }
-        await Instructor.create({
-          nombre_Instruc: nombre_Usua,
-          apellido_Instruc: apellido_Usua,
-          tipodoc_Instruc: tipo_documento,
-          documento_Instruc: documento,
-          genero_Instruc: genero_Usua, // Asegúrate de incluir esto
-          id_Usua3FK: nuevoUsuario.id_Usua,
-          ...restoDatos
-        }, { transaction });
-      } else if (id_Rol1FK === 3) { // Capacitador
-        if (!nombre_Usua || !apellido_Usua || !tipo_documento || !documento) {
-          throw new Error('Nombre, apellido, tipo de documento y documento son requeridos para Capacitador.');
-        }
-        await Capacitador.create({
-          nombre_Capac: nombre_Usua,
-          apellidos_Capac: apellido_Usua,
-          tipodoc_Capac: tipo_documento,
-          documento_Capac: documento,
-          genero_Capac: genero_Usua, // Asegúrate de incluir esto
-          id_Usua1FK: nuevoUsuario.id_Usua,
-          ...restoDatos
-        }, { transaction });
-      } else {
-        throw new Error('Rol de usuario no reconocido.');
+  // Iniciar una transacción
+  const transaction = await Usuario.sequelize.transaction();
+
+  try {
+    // Crear usuario base
+    const hashedPass = await bcrypt.hash(clave, 10); // Hash de la clave
+    const nuevoUsuario = await Usuario.create({
+      correo_Usua: correo,
+      clave_Usua: hashedPass,
+      id_Rol1FK: rol
+    }, { transaction });
+
+    // Crear datos específicos de cada tipo de usuario
+    if (rol === 1) { // Administrador
+      if (!nombre || !apellido || !tipoDocumento || !documento) {
+        throw new Error('Faltan datos para crear un Administrador');
       }
 
-      // Confirmar la transacción
-      await transaction.commit();
+      await Administrador.create({
+        nombre_Admin: nombre,
+        apellido_Admin: apellido,
+        tipoDocumento_Admin: tipoDocumento,
+        documento_Admin: documento,
+        genero_Admin: genero,
+        id_Usuario1FK: nuevoUsuario.id_Usuario
+      }, { transaction });
 
-      res.status(201).json({ message: "Usuario creado con éxito" });
-    } catch (error) {
-      // Revertir la transacción en caso de error
-      if (transaction) await transaction.rollback();
-      
-      console.error(`Error al crear usuario: ${error}`);
-      res.status(500).json({ message: "Error al crear usuario", error: error.message });
+    } else if (rol === 2) { // Instructor
+      if (!nombre || !apellido || !tipoDocumento || !documento) {
+        throw new Error('Faltan datos para crear un Instructor');
+      }
+
+      await Instructor.create({
+        nombre_Inst: nombre,
+        apellido_Inst: apellido,
+        tipoDocumento_Inst: tipoDocumento,
+        documento_Inst: documento,
+        genero_Inst: genero,
+        id_Usuario1FK: nuevoUsuario.id_Usuario
+      }, { transaction });
+
+    } else if (rol === 3) { // Capacitador
+      if (!nombre || !apellido || !tipoDocumento || !documento) {
+        throw new Error('Faltan datos para crear un Capacitador');
+      }
+
+      await Capacitador.create({
+        nombre_Cap: nombre,
+        apellido_Cap: apellido,
+        tipoDocumento_Cap: tipoDocumento,
+        documento_Cap: documento,
+        genero_Cap: genero,
+        id_Usuario1FK: nuevoUsuario.id_Usuario
+      }, { transaction });
     }
+
+    // Confirmar transacción
+    await transaction.commit();
+    res.status(201).json({ message: 'Usuario creado correctamente.' });
+
+  } catch (error) {
+    // Revertir transacción en caso de error
+    await transaction.rollback();
+    console.error(error);
+    res.status(500).json({ message: 'Error al registrar el usuario: ' + error.message });
   }
+}
 
   static async inactivarUsuario(req, res) {
     try {
