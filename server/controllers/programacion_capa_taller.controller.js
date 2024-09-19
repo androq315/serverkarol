@@ -5,17 +5,22 @@ class ProgramacionCapaTallerController {
   // Obtener programaciones por ficha
   static async getProgramacionesPorFicha(req, res) {
     try {
-      const ficha = parseInt(req.params.ficha, 10); // Asegúrate de convertir el parámetro a un entero
+      const ficha = parseInt(req.params.ficha, 10);
       const cordinacion = req.params.cordinacion;
 
-      // Verifica que los parámetros estén definidos
       if (!ficha || !cordinacion) {
         return res.status(400).json({ message: 'Parámetros inválidos' });
       }
 
       // Llama al método del modelo
       const programaciones = await ProgramacionCapaTaller.getProgramacionPorFicha(ficha, cordinacion);
-      res.status(200).json(programaciones);
+
+      // Filtrar duplicados basado en 'fecha_procaptall' y 'horaInicio_procaptall'
+      const uniqueProgramaciones = programaciones.filter((programacion, index, self) =>
+        index === self.findIndex((p) => p.fecha_procaptall === programacion.fecha_procaptall && p.horaInicio_procaptall === programacion.horaInicio_procaptall)
+      );
+
+      res.status(200).json(uniqueProgramaciones);
     } catch (error) {
       console.error(`Error al obtener las programaciones por ficha (${req.params.ficha}):`, error);
       res.status(500).json({ message: `Error al obtener las programaciones: ${error.message}` });
@@ -35,31 +40,24 @@ class ProgramacionCapaTallerController {
 
   static async getProgramacionesCT(req, res) {
     try {
-      const programacionesCT =
-        await ProgramacionCapaTaller.getProgramacionesCT();
+      const programacionesCT = await ProgramacionCapaTaller.getProgramacionesCT();
       res.status(200).json(programacionesCT);
     } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Error al obtener las programaciones" + error });
+      res.status(500).json({ message: "Error al obtener las programaciones" + error });
     }
   }
 
   static async getProgramacionCT(req, res) {
     try {
       const id_procaptall = req.params.id;
-      const programacionCT = await ProgramacionCapaTaller.getProgramacionCT(
-        id_procaptall
-      );
+      const programacionCT = await ProgramacionCapaTaller.getProgramacionCT(id_procaptall);
       if (programacionCT) {
         res.status(200).json(programacionCT);
       } else {
         res.status(404).json({ message: "Programacion no encontrada" });
       }
     } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Error al obtener la programacion" + error });
+      res.status(500).json({ message: "Error al obtener la programacion" + error });
     }
   }
 
@@ -68,6 +66,7 @@ class ProgramacionCapaTallerController {
       const update_programacionCT = {
         sede_procaptall: req.body.sede_procaptall,
         descripcion_procaptall: req.body.descripcion_procaptall,
+        ambiente_procaptall: req.body.ambiente_procaptall,
         fecha_procaptall: req.body.fecha_procaptall,
         horaInicio_procaptall: req.body.horaInicio_procaptall,
         horaFin_procaptall: req.body.horaFin_procaptall,
@@ -76,15 +75,10 @@ class ProgramacionCapaTallerController {
         numero_FichaFK: req.body.numero_FichaFK,
       };
       const id_procaptall = req.params.id;
-      await ProgramacionCapaTaller.update_programacionCT(
-        id_procaptall,
-        update_programacionCT
-      );
+      await ProgramacionCapaTaller.update_programacionCT(id_procaptall, update_programacionCT);
       res.status(200).json({ message: "Programacion actualizada con éxito" });
     } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Error al actualizar la programacion" + error });
+      res.status(500).json({ message: "Error al actualizar la programacion" + error });
     }
   }
 
@@ -93,6 +87,7 @@ class ProgramacionCapaTallerController {
       const pct = {
         sede_procaptall: req.body.sede_procaptall,
         descripcion_procaptall: req.body.descripcion_procaptall,
+        ambiente_procaptall: req.body.ambiente_procaptall,
         fecha_procaptall: req.body.fecha_procaptall,
         horaInicio_procaptall: req.body.horaInicio_procaptall,
         horaFin_procaptall: req.body.horaFin_procaptall,
@@ -111,13 +106,9 @@ class ProgramacionCapaTallerController {
     try {
       const { id_procaptall } = req.params;
       console.log("id_procaptall:", id_procaptall);
-      const result = await ProgramacionCapaTaller.eliminarProgramacionCT(
-        id_procaptall
-      );
+      const result = await ProgramacionCapaTaller.eliminarProgramacionCT(id_procaptall);
       if (result) {
-        res
-          .status(200)
-          .json({ message: "Programacion eliminada exitosamente" });
+        res.status(200).json({ message: "Programacion eliminada exitosamente" });
       } else {
         res.status(404).json({ message: "Programacion no encontrada" });
       }

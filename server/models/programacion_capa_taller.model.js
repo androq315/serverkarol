@@ -1,4 +1,4 @@
-import { DataTypes, INTEGER, Model } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/db.js";
 
 class ProgramacionCapaTaller extends Model {
@@ -15,13 +15,19 @@ class ProgramacionCapaTaller extends Model {
   // Llamar al procedimiento almacenado para obtener la programación por ficha
   static async getProgramacionPorFicha(ficha, cordinacion) {
     try {
-      return await sequelize.query(
-        'CALL ObtenerProgramacionPorFicha(:ficha, :cordinacion)',
+      const programaciones = await sequelize.query(
+        'CALL ObtenerProgramacionPorFicha(:ficha, :cordinacion)', 
         {
           replacements: { ficha, cordinacion },
           type: sequelize.QueryTypes.SELECT
         }
       );
+
+      // Filtrar duplicados por 'fecha_procaptall' y 'horaInicio_procaptall'
+      return programaciones.filter((programacion, index, self) =>
+        index === self.findIndex((p) => p.fecha_procaptall === programacion.fecha_procaptall && p.horaInicio_procaptall === programacion.horaInicio_procaptall)
+      );
+
     } catch (error) {
       console.error('Error al ejecutar ObtenerProgramacionPorFicha:', error);
       throw error;
@@ -93,6 +99,7 @@ ProgramacionCapaTaller.init(
       allowNull: false,
     },
     descripcion_procaptall: { type: DataTypes.STRING(50), allowNull: false },
+    ambiente_procaptall: { type: DataTypes.STRING(80), allowNull: false },
     fecha_procaptall: { type: DataTypes.DATE, allowNull: false },
     horaInicio_procaptall: { type: DataTypes.TIME, allowNull: false },
     horaFin_procaptall: { type: DataTypes.TIME, allowNull: false },
@@ -107,5 +114,17 @@ ProgramacionCapaTaller.init(
     underscored: false,
   }
 );
+
+// Función para obtener y mostrar la programación
+(async () => {
+  const ficha = 2902081;
+  const cordinacion = 'Análisis y desarrollo de software';
+  try {
+    const programacion = await ProgramacionCapaTaller.getProgramacionPorFicha(ficha, cordinacion);
+    console.log(programacion); // Aquí se mostrarán los datos obtenidos
+  } catch (error) {
+    console.error('Error al obtener programación:', error);
+  }
+})();
 
 export { ProgramacionCapaTaller };
