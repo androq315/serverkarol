@@ -68,6 +68,51 @@ class ProgramacionCapaTaller extends Model {
     }
   }
 
+  // Método para obtener programaciones por sede 52
+  static async getProgramacionesBySede52() {
+    try {
+      return await sequelize.query(
+        'CALL ObtenerProgramacionPorSede52()',
+        {
+          type: sequelize.QueryTypes.SELECT
+        }
+      );
+    } catch (error) {
+      console.error(`Error al obtener las programaciones por sede 52:`, error);
+      throw error;
+    }
+  }
+
+  // Método para obtener programaciones por sede 64
+  static async getProgramacionesBySede64() {
+    try {
+      return await sequelize.query(
+        'CALL ObtenerProgramacionPorSede64()',
+        {
+          type: sequelize.QueryTypes.SELECT
+        }
+      );
+    } catch (error) {
+      console.error(`Error al obtener las programaciones por sede 64:`, error);
+      throw error;
+    }
+  }
+
+  // Método para obtener programaciones por sede Fontibón
+  static async getProgramacionesBySedeFontibon() {
+    try {
+      return await sequelize.query(
+        'CALL ObtenerProgramacionPorSedeFontibon()',
+        {
+          type: sequelize.QueryTypes.SELECT
+        }
+      );
+    } catch (error) {
+      console.error(`Error al obtener las programaciones por sede Fontibón:` , error);
+      throw error;
+    }
+  }
+
   static async updateProgramacionCT(id_procaptall, update_programacionCT) {
     try {
       const programacionCT = await this.findByPk(id_procaptall);

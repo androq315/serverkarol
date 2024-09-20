@@ -11,6 +11,16 @@ class Taller extends Model {
     }
   }
 
+  static async getTallerPorNombre(nombreTaller) {
+    try {
+        const [result] = await db.query('CALL ObtenerTallerPorNombre(?)', [nombreTaller]);
+        return result;
+    } catch (error) {
+        console.error(`Error al obtener el taller: ${error}`);
+        throw error;
+    }
+}
+
   static async getTalleres() {
     try {
       return await this.findAll();

@@ -24,6 +24,31 @@ class HorarioController {
     }
   }
 
+
+  static async getHorariosfc(req, res) {
+    try {
+      const { numero_Ficha } = req.params;
+      const cordinacion_Ficha = decodeURIComponent(req.params.cordinacion_Ficha);
+
+      console.log("Número de Ficha:", numero_Ficha);
+      console.log("Coordinación de Ficha:", cordinacion_Ficha);
+
+      const horarios = await Horario.getHorariosPorFichaYCoordinacion(numero_Ficha, cordinacion_Ficha);
+      
+      console.log("Horarios:", horarios);
+
+      if (horarios.length > 0) {
+        res.status(200).json(horarios);
+      } else {
+        res.status(404).json({ message: "No se encontraron horarios para la ficha y coordinación dadas" });
+      }
+    } catch (error) {
+      console.error("Error al obtener los horarios:", error);
+      res.status(500).json({ message: "Error al obtener los horarios: " + error.message });
+    }
+  }
+
+
   static async putHorario(req, res) {
     try {
       const update_horario = {

@@ -24,6 +24,21 @@ class TallerController {
         }
     }
 
+    static async getTaller(req, res) {
+        try {
+            const nombreTaller = req.params.nombre; // Cambia 'id' por 'nombre' para buscar por nombre
+            const taller = await Taller.getTallerPorNombre(nombreTaller);
+            if (taller && taller.length > 0) {
+                res.status(200).json(taller);
+            } else {
+                res.status(404).json({ message: "Taller no encontrado" });
+            }
+        } catch (error) {
+            res.status(500).json({ message: "Error al obtener el taller: " + error });
+        }
+    }
+
+
     static async putTaller(req, res){
         try {
             const update_taller = {

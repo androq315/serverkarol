@@ -29,15 +29,20 @@ class Ficha extends Model {
     }
   }
 
-  static async updateFicha(id, update_ficha) {
+
+  static async updateFicha(numero_Ficha, update_ficha) {
     try {
-      const ficha = await this.findByPk(numero_Ficha);
-      return ficha.update(update_ficha);
+        const ficha = await this.findByPk(numero_Ficha); // Asegúrate de que estás usando numero_Ficha aquí
+        if (!ficha) {
+            throw new Error('Ficha no encontrada');
+        }
+        return await ficha.update(update_ficha);
     } catch (error) {
-      console.error(`error no se actualizó la ficha: ${error}`);
-      throw error;
+        console.error(`error no se actualizó la ficha: ${error}`);
+        throw error;
     }
   }
+
 
   static async eliminarFicha(numero_Ficha) {
     try {

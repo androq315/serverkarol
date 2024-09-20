@@ -105,7 +105,6 @@ static async postUsuario(req, res) {
     genero,
     tipoDocumento,
     documento,
-    ...restoDatos
   } = req.body;
 
   // Validar campos obligatorios comunes
@@ -141,10 +140,10 @@ static async postUsuario(req, res) {
       await Administrador.create({
         nombre_Admin: nombre,
         apellido_Admin: apellido,
-        tipoDocumento_Admin: tipoDocumento,
+        tipodoc_Admin: tipoDocumento,
         documento_Admin: documento,
         genero_Admin: genero,
-        id_Usuario1FK: nuevoUsuario.id_Usuario
+        id_Usua2FK: nuevoUsuario.id_Usua // Asegúrate de que esta clave sea consistente
       }, { transaction });
 
     } else if (rol === 2) { // Instructor
@@ -153,12 +152,12 @@ static async postUsuario(req, res) {
       }
 
       await Instructor.create({
-        nombre_Inst: nombre,
-        apellido_Inst: apellido,
-        tipoDocumento_Inst: tipoDocumento,
-        documento_Inst: documento,
-        genero_Inst: genero,
-        id_Usuario1FK: nuevoUsuario.id_Usuario
+        nombre_Instruc: nombre,
+        apellido_Instruc: apellido,
+        tipodoc_Instruc: tipoDocumento,
+        documento_Instruc: documento,
+        genero_Instruc: genero,
+        id_Usua3FK: nuevoUsuario.id_Usua // Asegúrate de que esta clave sea consistente
       }, { transaction });
 
     } else if (rol === 3) { // Capacitador
@@ -167,12 +166,12 @@ static async postUsuario(req, res) {
       }
 
       await Capacitador.create({
-        nombre_Cap: nombre,
-        apellido_Cap: apellido,
-        tipoDocumento_Cap: tipoDocumento,
-        documento_Cap: documento,
-        genero_Cap: genero,
-        id_Usuario1FK: nuevoUsuario.id_Usuario
+        nombre_Capac: nombre,
+        apellido_Capac: apellido,
+        tipodoc_Capac: tipoDocumento,
+        documento_Capac: documento,
+        genero_Capac: genero,
+        id_Usua1FK: nuevoUsuario.id_Usua // Asegúrate de que esta clave sea consistente
       }, { transaction });
     }
 
@@ -187,6 +186,7 @@ static async postUsuario(req, res) {
     res.status(500).json({ message: 'Error al registrar el usuario: ' + error.message });
   }
 }
+
 
   static async inactivarUsuario(req, res) {
     try {

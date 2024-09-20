@@ -24,19 +24,20 @@ class FichaController {
         }
     }
 
-    static async putFicha(req, res){
+
+    static async putFicha(req, res) {
         try {
             const update_ficha = {
-                numero_Ficha:  req.body.numero_Ficha,
                 cordinacion_Ficha: req.body.cordinacion_Ficha,
-            }
-            const numero_Ficha = req.params.id;
+            };
+            const numero_Ficha = req.params.id; // Asegúrate de obtener el ID del parámetro correctamente
             await Ficha.updateFicha(numero_Ficha, update_ficha);
-            res.status( 200  ).json( { message: "Ficha actualizada con éxito"} );
+            res.status(200).json({ message: "Ficha actualizada con éxito" });
         } catch (error) {
-            res.status( 500  ).json( { message: "Error al actualizar la ficha" +  error } );
+            res.status(500).json({ message: "Error al actualizar la ficha: " + error.message });
         }
     }
+
 
     static  async postFicha(req, res){
         try {

@@ -30,6 +30,20 @@ class Horario extends Model {
     }
   }
 
+  static async getHorariosPorFichaYCoordinacion(numero_Ficha, cordinacion_Ficha) {
+    try {
+      const [results] = await sequelize.query(`
+        CALL ObtenerHorariosPorFichaYCoordinacion(:numero_Ficha, :cordinacion_Ficha)
+      `, {
+        replacements: { numero_Ficha, cordinacion_Ficha },
+      });
+      return results;
+    } catch (error) {
+      console.error(`Error al obtener horarios: ${error}`);
+      throw error;
+    }
+  }
+
   static async updateHorario(id, update_horario) {
     try {
       const horario = await this.findByPk(id);
