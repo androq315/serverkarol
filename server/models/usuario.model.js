@@ -3,17 +3,34 @@ import { sequelize } from "../config/db.js";
 import bcrypt from 'bcrypt'
 
 class Usuario extends Model {
-  static async createUsuario(usuario) {
-    try {
-      const hashedPass = await bcrypt.hash(usuario.clave_Usua, 10); // Usar 10 es más recomendado para hashing
-      usuario.clave_Usua = hashedPass;
-      return await this.create(usuario);
-    } catch (error) {
-      console.error(`Error al crear usuario: ${error}`);
-      throw error;
-    }
+
+  static async registrarUsuario(usuario) {
+    const query = `
+      CALL RegistrarUsuario(
+        :correo,
+        :clave,
+        :rol,
+        :nombre,
+        :apellido,
+        :genero,
+        :tipoDocumento,
+        :documento
+      )`;
+    
+    await sequelize.query(query, {
+      replacements: {
+        correo: usuario.correo_Usua,
+        clave: usuario.clave_Usua,
+        rol: usuario.id_Rol1FK,
+        nombre: usuario.nombre,
+        apellido: usuario.apellido,
+        genero: usuario.genero,
+        tipoDocumento: usuario.tipodoc,
+        documento: usuario.documento,
+      }
+    });
   }
-  
+
 
   static async obtenerPerfilUsuario(id_Usua) {
     try {

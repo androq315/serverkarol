@@ -29,7 +29,7 @@ class Capacitador extends Model {
     }
   }
 
-  static async updateInstructor(id, update_capacitador) {
+  static async updateCapacitador(id, update_capacitador) {
     try {
       const capacitador = await this.findByPk(id);
       return capacitador.update( update_capacitador )

@@ -107,81 +107,38 @@ static async postUsuario(req, res) {
     documento,
   } = req.body;
 
-  // Validar campos obligatorios comunes
+  // Validar campos obligatorios
   if (!correo || !clave || !rol) {
     return res.status(400).json({ message: 'Correo, clave y rol son requeridos.' });
   }
 
-  console.log("Rol recibido:", rol);  // Log para verificar el rol
-
-  const rolesValidos = [1, 2, 3]; // Define los roles válidos según la base de datos
+  const rolesValidos = [1, 2, 3]; // Roles válidos
   if (!rolesValidos.includes(parseInt(rol, 10))) {
     return res.status(400).json({ message: 'Rol de usuario no reconocido.' });
   }
 
-  // Iniciar una transacción
-  const transaction = await Usuario.sequelize.transaction();
-
   try {
-    // Crear usuario base
-    const hashedPass = await bcrypt.hash(clave, 10); // Hash de la clave
-    const nuevoUsuario = await Usuario.create({
+    // Hashear la contraseña antes de pasarla al procedimiento
+    const hashedPass = await bcrypt.hash(clave, 10);
+    
+    // Crear objeto usuario para el procedimiento
+    const usuarioData = {
       correo_Usua: correo,
-      clave_Usua: hashedPass,
-      id_Rol1FK: rol
-    }, { transaction });
+      clave_Usua: hashedPass, // Asegúrate de que la clave se guarde hasheada
+      id_Rol1FK: rol,
+      nombre,
+      apellido,
+      genero,
+      tipodoc: tipoDocumento,
+      documento,
+    };
 
-    // Crear datos específicos de cada tipo de usuario
-    if (rol === 1) { // Administrador
-      if (!nombre || !apellido || !tipoDocumento || !documento) {
-        throw new Error('Faltan datos para crear un Administrador');
-      }
+    // Llamar al procedimiento almacenado
+    await Usuario.registrarUsuario(usuarioData);
 
-      await Administrador.create({
-        nombre_Admin: nombre,
-        apellido_Admin: apellido,
-        tipodoc_Admin: tipoDocumento,
-        documento_Admin: documento,
-        genero_Admin: genero,
-        id_Usua2FK: nuevoUsuario.id_Usua // Asegúrate de que esta clave sea consistente
-      }, { transaction });
-
-    } else if (rol === 2) { // Instructor
-      if (!nombre || !apellido || !tipoDocumento || !documento) {
-        throw new Error('Faltan datos para crear un Instructor');
-      }
-
-      await Instructor.create({
-        nombre_Instruc: nombre,
-        apellido_Instruc: apellido,
-        tipodoc_Instruc: tipoDocumento,
-        documento_Instruc: documento,
-        genero_Instruc: genero,
-        id_Usua3FK: nuevoUsuario.id_Usua // Asegúrate de que esta clave sea consistente
-      }, { transaction });
-
-    } else if (rol === 3) { // Capacitador
-      if (!nombre || !apellido || !tipoDocumento || !documento) {
-        throw new Error('Faltan datos para crear un Capacitador');
-      }
-
-      await Capacitador.create({
-        nombre_Capac: nombre,
-        apellido_Capac: apellido,
-        tipodoc_Capac: tipoDocumento,
-        documento_Capac: documento,
-        genero_Capac: genero,
-        id_Usua1FK: nuevoUsuario.id_Usua // Asegúrate de que esta clave sea consistente
-      }, { transaction });
-    }
-
-    // Confirmar transacción
-    await transaction.commit();
     res.status(201).json({ message: 'Usuario creado correctamente.' });
 
   } catch (error) {
-    // Revertir transacción en caso de error
-    await transaction.rollback();
     console.error(error);
     res.status(500).json({ message: 'Error al registrar el usuario: ' + error.message });
   }
