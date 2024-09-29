@@ -74,99 +74,115 @@ class ExcelController {
     }
   }
 
+
+
+
+
   static async cargarUsuarios(req, res) {
+    let transaction;
     try {
       const filePath = req.file.path;
       const workbook = XLSX.readFile(filePath);
       const sheetName = workbook.SheetNames[0];
       const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-  
-      const transaction = await Usuario.sequelize.transaction();
-  
+
+      transaction = await Usuario.sequelize.transaction();
+
       for (const row of sheetData) {
-        const correo = row.correo || row.Email;
-        const clave = row.clave || row.Password;
-        const rol = parseInt(row.rol || row.Rol, 10);
-        const nombre = row.nombre || row.Nombre;
-        const apellido = row.apellido || row.Apellido;
-        const tipoDocumento = row["tipo documento"] || row["Tipo Documento"];
-        const documento = row.documento || row.Documento;
-        const genero = row.genero || row.Género || "No especificado"; // Asignar un valor predeterminado
-  
-        // Validar campos obligatorios comunes
-        if (!correo || !clave || !rol) {
-          throw new Error('Correo, clave y rol son requeridos.');
-        }
-  
-        const rolesValidos = [1, 2, 3]; // Define los roles válidos según tu lógica
-        if (!rolesValidos.includes(rol)) {
-          throw new Error('Rol de usuario no reconocido.');
-        }
-  
-        // Hash de la clave
+        const {
+          correo = row.correo || row.Email,
+          clave = row.clave || row.Password,
+          rol = row.rol || row.Rol,
+          nombre = row.nombre || row.Nombre,
+          apellido = row.apellido || row.Apellido,
+          tipoDocumento = row["tipo documento"] || row["Tipo Documento"],
+          documento = row.documento || row.Documento,
+          genero = row.genero || row.Género || "No especificado",
+        } = row;
+
+        await this.validarUsuario(correo, clave, rol, nombre, apellido, tipoDocumento, documento);
+
         const hashedPass = await bcrypt.hash(clave, 10);
-  
-        // Crear usuario base
         const nuevoUsuario = await Usuario.create({
           correo_Usua: correo,
           clave_Usua: hashedPass,
-          id_Rol1FK: rol
+          id_Rol1FK: this.obtenerRolId(rol)
         }, { transaction });
-  
-        // Crear datos específicos según el rol
-        if (rol === 1) { // Administrador
-          if (!nombre || !apellido || !tipoDocumento || !documento) {
-            throw new Error('Faltan datos para crear un Administrador');
-          }
-          await Administrador.create({
-            nombre_Admin: nombre,
-            apellido_Admin: apellido,
-            tipoDocumento_Admin: tipoDocumento,
-            documento_Admin: documento,
-            genero_Admin: genero,
-            id_Usuario1FK: nuevoUsuario.id_Usuario
-          }, { transaction });
-  
-        } else if (rol === 2) { // Instructor
-          if (!nombre || !apellido || !tipoDocumento || !documento) {
-            throw new Error('Faltan datos para crear un Instructor');
-          }
-          await Instructor.create({
-            nombre_Inst: nombre,
-            apellido_Inst: apellido,
-            tipoDocumento_Inst: tipoDocumento,
-            documento_Inst: documento,
-            genero_Inst: genero,
-            id_Usuario1FK: nuevoUsuario.id_Usuario
-          }, { transaction });
-  
-        } else if (rol === 3) { // Capacitador
-          if (!nombre || !apellido || !tipoDocumento || !documento) {
-            throw new Error('Faltan datos para crear un Capacitador');
-          }
-          await Capacitador.create({
-            nombre_Cap: nombre,
-            apellido_Cap: apellido,
-            tipoDocumento_Cap: tipoDocumento,
-            documento_Cap: documento,
-            genero_Cap: genero,
-            id_Usuario1FK: nuevoUsuario.id_Usuario
-          }, { transaction });
-        }
+
+        await this.crearRolEspecifico(rol, { nombre, apellido, tipoDocumento, documento, genero }, nuevoUsuario.id_Usuario, transaction);
       }
-  
-      // Confirmar transacción
+
       await transaction.commit();
       res.status(201).json({ message: "Usuarios cargados con éxito" });
-  
+
     } catch (error) {
-      // Revertir transacción en caso de error
       if (transaction) await transaction.rollback();
       console.error("Error al cargar los usuarios:", error);
       res.status(500).json({ message: "Error al cargar los usuarios: " + error.message });
     }
   }
-  
+
+  static async validarUsuario(correo, clave, rol, nombre, apellido, tipoDocumento, documento) {
+    if (!correo || !clave || !rol) {
+      throw new Error('Correo, clave y rol son requeridos.');
+    }
+
+    const rolesValidos = ['administrador', 'instructor', 'capacitador'];
+    if (!rolesValidos.includes(rol.toLowerCase())) {
+      throw new Error('Rol de usuario no reconocido.');
+    }
+
+    if ((rol === 'administrador' || rol === 'instructor' || rol === 'capacitador') &&
+        (!nombre || !apellido || !tipoDocumento || !documento)) {
+      throw new Error(`Faltan datos para crear un ${rol.charAt(0).toUpperCase() + rol.slice(1)}`);
+    }
+  }
+
+  static obtenerRolId(rol) {
+    const rolesMap = {
+      administrador: 1,
+      instructor: 2,
+      capacitador: 3
+    };
+    return rolesMap[rol.toLowerCase()] || null;
+  }
+
+  static async crearRolEspecifico(rol, datos, idUsuario, transaction) {
+    if (rol === 'administrador') {
+      await Administrador.create({
+        nombre_Admin: datos.nombre,
+        apellido_Admin: datos.apellido,
+        tipoDocumento_Admin: datos.tipoDocumento,
+        documento_Admin: datos.documento,
+        genero_Admin: datos.genero,
+        id_Usuario1FK: idUsuario
+      }, { transaction });
+    } else if (rol === 'instructor') {
+      await Instructor.create({
+        nombre_Inst: datos.nombre,
+        apellido_Inst: datos.apellido,
+        tipoDocumento_Inst: datos.tipoDocumento,
+        documento_Inst: datos.documento,
+        genero_Inst: datos.genero,
+        id_Usuario1FK: idUsuario
+      }, { transaction });
+    } else if (rol === 'capacitador') {
+      await Capacitador.create({
+        nombre_Cap: datos.nombre,
+        apellido_Cap: datos.apellido,
+        tipoDocumento_Cap: datos.tipoDocumento,
+        documento_Cap: datos.documento,
+        genero_Cap: datos.genero,
+        id_Usuario1FK: idUsuario
+      }, { transaction });
+    }
+  }
+
+
+
+
+
+
   static async cargarHorarios(req, res) {
     try {
       const filePath = req.file.path;
