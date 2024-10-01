@@ -32,9 +32,7 @@ class Horario extends Model {
 
   static async getHorariosPorFichaYCoordinacion(numero_Ficha, cordinacion_Ficha) {
     try {
-      const [results] = await sequelize.query(`
-        CALL ObtenerHorariosPorFichaYCoordinacion(:numero_Ficha, :cordinacion_Ficha)
-      `, {
+      const [results] = await sequelize.query(`CALL ObtenerHorariosPorFichaYCoordinacion(:numero_Ficha, :cordinacion_Ficha)`, {
         replacements: { numero_Ficha, cordinacion_Ficha },
       });
       return results;
@@ -75,6 +73,7 @@ Horario.init(
     fecha_fintrimestre_Horari: { type: DataTypes.DATE, allowNull: false },
     aprendices_formacionfecha_Horari: { type: DataTypes.INTEGER, allowNull: false },
     horas_asignadastrimestre_Horari: { type: DataTypes.INTEGER, allowNull: false },
+    trim_ficha_Horari: {type: DataTypes.STRING(50), allowNull:false},
     bloque_horaclase_Horari:  { type: DataTypes.STRING(25), allowNull: false },
     fechaDia_Horari: { type: DataTypes.STRING(30), allowNull: false },
     id_InstrucFK: { type: DataTypes.INTEGER, allowNull: false },
