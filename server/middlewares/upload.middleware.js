@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadsFolder = path.resolve('uploads/'); 
     createUploadsFolder(uploadsFolder); // Asegurarse de que la carpeta exista
+    console.log("Archivo recibido:", file);
     cb(null, uploadsFolder); // Carpeta donde se almacenan los archivos
   },
   filename: (req, file, cb) => {
