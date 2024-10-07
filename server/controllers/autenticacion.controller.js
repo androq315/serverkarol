@@ -1,7 +1,7 @@
 import { Usuario } from "../models/usuario.model.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 dotenv.config();
 
@@ -10,7 +10,9 @@ class AutenticacionController {
     try {
       const { correo_Usua, clave_Usua } = req.body;
       console.log("este es el correo", correo_Usua);
-      const usuario = await Usuario.findOne({where: { correo_Usua: correo_Usua }});
+      const usuario = await Usuario.findOne({
+        where: { correo_Usua: correo_Usua },
+      });
 
       if (usuario) {
         const isMatch = await usuario.comparar_clave(clave_Usua);
@@ -30,7 +32,7 @@ class AutenticacionController {
               apellido: usuario.apellido_Usua,
               genero: usuario.genero_Usua,
               tipoDocumento: usuario.tipoDoc_Usua,
-              documento: usuario.doc_Usua
+              documento: usuario.doc_Usua,
             },
           });
         } else {
@@ -45,6 +47,7 @@ class AutenticacionController {
       res.status(500).json({ message: "Error al iniciar sesión: " + error });
     }
   }
+
 }
 
 export default AutenticacionController;
