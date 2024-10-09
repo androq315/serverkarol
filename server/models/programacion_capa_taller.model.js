@@ -44,12 +44,12 @@ class ProgramacionCapaTaller extends Model {
   }
 
   // Llamar al procedimiento almacenado para obtener la programación por ficha
-  static async getProgramacionPorFicha(ficha, cordinacion) {
+  static async getProgramacionPorFicha(ficha) {
     try {
       const programaciones = await sequelize.query(
-        "CALL ObtenerProgramacionPorFicha(:ficha, :cordinacion)",
+        "CALL ObtenerProgramacionPorFicha(:ficha)",
         {
-          replacements: { ficha, cordinacion },
+          replacements: { ficha },
           type: sequelize.QueryTypes.SELECT,
         }
       );

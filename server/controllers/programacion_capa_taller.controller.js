@@ -5,17 +5,12 @@ class ProgramacionCapaTallerController {
   static async getProgramacionesPorFicha(req, res) {
     try {
       const ficha = parseInt(req.params.ficha, 10);
-      const cordinacion = req.params.cordinacion;
-
-      if (!ficha || !cordinacion) {
-        return res.status(400).json({ message: "Parámetros inválidos" });
-      }
 
       // Llama al método del modelo
       const programaciones =
         await ProgramacionCapaTaller.getProgramacionPorFicha(
           ficha,
-          cordinacion
+
         );
 
       // Filtrar duplicados basado en 'fecha_procaptall' y 'horaInicio_procaptall'
