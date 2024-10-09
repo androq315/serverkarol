@@ -185,7 +185,7 @@ class UsuarioController {
         html: `
           <div style="font-family: Arial, sans-serif; text-align: center;">
             <img src="cid:logoSena" alt="Logo SENA" style="width: 150px; margin-bottom: 20px; border-radius:100px;">
-            <h1 style="color: #1e3799;">¡Bienvenido a la Plataforma!</h1>
+            <h1 style="color: #1e3799;">¡Bienvenido a la Plataforma AVA!</h1>
             <p style="font-size: 16px; color: #34495e;">Hola <strong>${nombre} ${apellido}</strong>.</p>
             <p style="font-size: 16px; color: #34495e;">
               Te damos la bienvenida a nuestra plataforma. Aquí están tus credenciales de acceso:
